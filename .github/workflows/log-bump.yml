@@ -1,0 +1,54 @@
+name: Bump version and create changelog based on commits
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The new version for bumping ex: 1.0.0'
+        required: true
+        type: number
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get repo history
+        run: git fetch --prune --unshallow
+
+      - name: Install required tools
+        uses: Roblox/setup-foreman@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Bump version
+        shell: bash
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          sed -i 's/version.*/version = '"\"$VERSION\""'/' wally.toml
+          sed -i "s/VERSION/$VERSION/" publish/wally.toml
+
+      - name: Create changelog
+        shell: bash
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          chmod +x publish/create_changelog.bash
+          ./publish/create_changelog.bash $VERSION $REPOSITORY
+          CHANGES=$(cat CHANGES.md)
+          awk -v A="$CHANGES" '{ if (NR == 6) print A; else print $0}' CHANGELOG.md > newCHANGELOG.md
+          mv newCHANGELOG.md CHANGELOG.md
+
+      - name: Push changes
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          git config --global user.email 'github-actions@users.noreply.github.com'
+          git config --global user.name "github-actions"
+          git add CHANGELOG.md wally.toml
+          git commit -m "Bumped version to $VERSION and added a changelog for it"
+          git push

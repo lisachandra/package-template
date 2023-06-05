@@ -1,0 +1,12 @@
+classOrder = ["package-template"]
+changelog = true
+gitSourceBranch = "main"
+
+[docusaurus]
+onBrokenLinks = "throw"
+onBrokenMarkdownLinks = "warn"
+tagline = ""
+
+[home]
+enabled = true
+includeReadme = false

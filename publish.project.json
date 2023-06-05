@@ -1,0 +1,21 @@
+{
+    "name": "publish",
+    "tree": {
+        "$className": "DataModel",
+
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+
+            "package-template": {
+                "$className": "Folder",
+                "$path": "Packages",
+                "$ignoreUnknownInstances": true,
+
+                "package-template": {
+                    "$className": "Folder",
+                    "$path": "src"
+                }
+            }
+        }
+    }
+}

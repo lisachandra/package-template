@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install required tools
+        uses: Roblox/setup-foreman@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump version
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          sed -i 's/version.*/version = '"\"$VERSION\""'/' wally.toml
+          sed -i "s/VERSION/$VERSION/" publish/wally.toml
+
+      - name: Publish release to Wally
+        shell: bash
+        env:
+          WALLY_AUTH: ${{ secrets.WALLY_AUTH }}
+        run: |
+          mkdir -p ~/.wally
+          echo "$WALLY_AUTH" > ~/.wally/auth.toml
+          wally publish
+
+      - name: Install packages
+        shell: bash
+        run: wally install
+
+      - name: Build place file
+        run: rojo build publish.project.json -o package-template.rbxl
+
+      - name: Create .rbxm file
+        shell: bash
+        run: remodel run publish/build.lua
+
+      - name: Create release note
+        shell: bash
+        run: |
+          sed -i -e '1,6d' CHANGELOG.md
+          python3 publish/get_changes.py CHANGELOG.md > publish/CHANGES.md
+          sed -i 's|(rbxm)|(https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/package-template.rbxm)|' publish/RELEASE_NOTE.md
+          sed -i 's|version|${{ github.ref_name }}|' publish/RELEASE_NOTE.md
+          cat publish/CHANGES.md >> publish/RELEASE_NOTE.md
+      
+      - name: Publish release to github
+        uses: softprops/action-gh-release@v1
+        with:
+          name: v${{ github.ref_name }}
+          fail_on_unmatched_files: true
+          body_path: publish/RELEASE_NOTE.md
+          files: |
+              package-template.rbxm
