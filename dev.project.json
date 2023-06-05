@@ -19,10 +19,7 @@
 				"$path": "Packages",
 				"$ignoreUnknownInstances": true,
 
-				"package-template": {
-					"$className": "Folder",
-					"$path": "src"
-				}
+				"package-template": { "$path": "src" }
 			}
 		},
 
@@ -31,12 +28,6 @@
 
 			"Tests": {
 				"$className": "Folder",
-
-				"TestEZ": {
-					"$className": "Folder",
-					"$path": "submodules/testez/src",
-					"$ignoreUnknownInstances": true
-				},
 
 				"Tests": {
 					"$className": "Folder",

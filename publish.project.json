@@ -11,10 +11,7 @@
                 "$path": "Packages",
                 "$ignoreUnknownInstances": true,
 
-                "package-template": {
-                    "$className": "Folder",
-                    "$path": "src"
-                }
+                "package-template": { "$path": "src" }
             }
         }
     }
