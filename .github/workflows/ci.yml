@@ -75,7 +75,7 @@ jobs:
         run: wally install
 
       - name: Build test place
-        run: rojo build tests.project.json -o tests.rbxl
+        run: rojo build dev.project.json -o tests.rbxl
 
       - name: Download OpenVPN
         run: choco install openvpn
