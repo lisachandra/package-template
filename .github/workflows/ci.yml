@@ -9,11 +9,6 @@ on:
     branches:
     - main
 
-# This cookie is intentionally public, because secrets are not available in pull request CI runs
-# It is from an empty account and not a security vulnerability
-env:
-  ROBLOSECURITY: ${{ secrets.ROBLOSECURITY || '_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_83FF9A26525D9FDC782B5375A984B207FE53CA6C69D3B4A336265C58FB0D241C217A0A691749DB71F5913EECE0307EC0E4ED2E673046259FA684AA1EF0746F51769FAF2214759E7197428A57A2E3C8D742C3142320BD816E5260C40926E6A2E2F03CDA91528D2EB60E5E169DE659C62F714E0F7D6324D5D66AB9DFCB0AC62227136924340E0ACC4F1F524D4C83A7ADFE326B67822EB32D1FC05EA0178702ADC191BAC17FDFFA25A1FD5B0AE590F74FC441208D76BD1D34569EDE40F82C48B1602186DCACCDCD3BB0B1C2BCCC0A65B785620D1FF8CC7F5207E4394C147827EBDDA45B83772D90EB48BD0E2A2C8FA0AA2C33A1A98163CE6F46199C95CB3141C72C08F6B492A2F8610755C48C07BCB683DA565F4396FEADE378050F1999CEAD825FBD93CDF8C05DF78B1A0D764F8060F8BE5B5F7C8C809D10BDADC6C8F53E9296908C93B1F5751BFC547F260EA786A9965376F05B5485F8B3FFA8906566DBFF102976982E49582B6507E298D63797968ECCAFDBFC1A0C06A62427AFC4F7ED15D693379F22FC' }}
-
 jobs:
   analyze:
     runs-on: ubuntu-latest
@@ -83,16 +78,22 @@ jobs:
         run: choco install openvpn
 
       - name: Run OpenVPN
-        run: Start-Process -FilePath "C:\\Program Files\\OpenVPN\\bin\\openvpn.exe" -ArgumentList "--config $((Resolve-Path .\\actions.ovpn).Path)"
+        env:
+          ovpn: ${{ secrets.OVPN }}
+        run: |
+          $ovpn | Out-File -FilePath "actions.ovpn"
+          Start-Process -FilePath "C:\\Program Files\\OpenVPN\\bin\\openvpn.exe" -ArgumentList "--config $((Resolve-Path .\\actions.ovpn).Path)"
 
       - name: Poll for IP Change
+        env:
+          ip: ${{ secrets.IP }}
         run: |
           $elapsed = 0
           while ($true) {
             try {
               $response = Invoke-WebRequest -Uri 'https://httpbin.org/ip' -Method GET -UseBasicParsing
               $content = ConvertFrom-Json $response.Content
-              if ($content.origin -eq "78.142.193.246") {
+              if ($content.origin -eq $ip) {
                 break
               }
             } catch {}
@@ -111,7 +112,7 @@ jobs:
           $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
           $cookie = New-Object System.Net.Cookie
           $cookie.Name = ".ROBLOSECURITY"
-          $cookie.Value = "${{ env.ROBLOSECURITY }}"
+          $cookie.Value = "${{ secrets.ROBLOSECURITY }}"
           $cookie.Domain = ".roblox.com"
           $session.Cookies.Add($cookie);
           Invoke-WebRequest "https://avatar.roblox.com/v1/avatar" -WebSession $session -UseBasicParsing
@@ -119,7 +120,7 @@ jobs:
       - name: Install Roblox Studio
         uses: OrbitalOwen/roblox-win-installer-action@1.1
         with:
-          cookie: ${{ env.ROBLOSECURITY }}
+          cookie: ${{ secrets.ROBLOSECURITY }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run tests
