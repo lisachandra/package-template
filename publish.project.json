@@ -6,12 +6,10 @@
         "ReplicatedStorage": {
             "$className": "ReplicatedStorage",
 
-            "package-template": {
+            "Packages": {
                 "$className": "Folder",
                 "$path": "Packages",
-                "$ignoreUnknownInstances": true,
-
-                "package-template": { "$path": "src" }
+                "$ignoreUnknownInstances": true
             }
         }
     }

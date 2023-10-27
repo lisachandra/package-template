@@ -11,13 +11,16 @@ jobs:
     name: Build and Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Install required tools
-        uses: Roblox/setup-foreman@v1
+      - uses: Roblox/setup-foreman@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: baptiste0928/cargo-install@v2
+        with:
+          crate: wally-package-types
+          version: "^1"
 
       - name: Bump version
         env:
@@ -35,25 +38,29 @@ jobs:
           echo "$WALLY_AUTH" > ~/.wally/auth.toml
           wally publish
 
-      - name: Install packages
-        shell: bash
-        run: wally install
-
       - name: Build place file
-        run: rojo build publish.project.json -o package-template.rbxl
+        run: |
+          wally install
+          rojo sourcemap dev.project.json --output sourcemap.json
+          wally-package-types --sourcemap sourcemap.json Packages/
+          rojo build publish.project.json -o package-template.rbxl
 
       - name: Create .rbxm file
         shell: bash
-        run: remodel run publish/build.lua
+        run: |
+          cd publish
+          lune build.lua
+          cd ..
 
       - name: Create release note
         shell: bash
         run: |
-          sed -i -e '1,6d' CHANGELOG.md
-          python3 publish/get_changes.py CHANGELOG.md > publish/CHANGES.md
-          sed -i 's|(rbxm)|(https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/package-template.rbxm)|' publish/RELEASE_NOTE.md
-          sed -i 's|version|${{ github.ref_name }}|' publish/RELEASE_NOTE.md
-          cat publish/CHANGES.md >> publish/RELEASE_NOTE.md
+          cd publish
+          lune get_changes.lua > CHANGES.md
+          sed -i 's|(rbxm)|(https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/package-template.rbxm)|' RELEASE_NOTE.md
+          sed -i 's|version|${{ github.ref_name }}|' RELEASE_NOTE.md
+          cat CHANGES.md >> RELEASE_NOTE.md
+          cd ..
       
       - name: Publish release to github
         uses: softprops/action-gh-release@v1
@@ -62,4 +69,4 @@ jobs:
           fail_on_unmatched_files: true
           body_path: publish/RELEASE_NOTE.md
           files: |
-              package-template.rbxm
+              publish/package-template.rbxm

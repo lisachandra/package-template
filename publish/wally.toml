@@ -1,8 +1,9 @@
 [package]
-name = "zxibs/package-template-publish"
+name = "DO-NOT-PUBLISH/package-template-publish"
 version = "0.1.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
+private = true
 
 [dependencies]
-package-template = "zxibs/package-template@VERSION"
+package-template = "lisachandra/package-template@VERSION"

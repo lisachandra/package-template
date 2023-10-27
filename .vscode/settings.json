@@ -2,8 +2,14 @@
     "luau-lsp.sourcemap.rojoProjectFile": "dev.project.json",
     "luau-lsp.types.definitionFiles": [
         "definitions/utils.d.lua",
-        "definitions/loaded.d.lua",
-        "definitions/testez.d.lua",
-        "definitions/remodel.d.lua"
     ],
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "publish": true,
+    }
 }

@@ -1,3 +1,10 @@
-local game = remodel.readPlaceFile("package-template.rbxl")
+--!nonstrict
+
+local fs = require("@lune/fs")
+local roblox = require("@lune/roblox")
+
+local game = roblox.deserializePlace(fs.readFile("package-template.rbxl"))
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-remodel.writeModelFile("package-template.rbxm", ReplicatedStorage:FindFirstChild("package-template") :: RemodelInstance)
+
+fs.writeFile("package-template.rbxm", roblox.serializeModel({ ReplicatedStorage:FindFirstChild("Packages") }))

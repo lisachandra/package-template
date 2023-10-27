@@ -1,5 +1,4 @@
 [tools]
+lune = { source = "filiptibell", version = "0.x" }
 rojo = { source = "rojo-rbx/rojo", version = "7.x" }
-remodel = { source = "rojo-rbx/remodel", version = "0.x" }
 luau-lsp = { source = "JohnnyMorganz/luau-lsp", version = "1.x" }
-run-in-roblox = { source = "rojo-rbx/run-in-roblox", version = "0.x" }

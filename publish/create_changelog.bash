@@ -6,7 +6,7 @@ LAST_TAG=$(git describe --tags --abbrev=0)
 VERSION=$1
 REPOSITORY=$2
 
-git config --global alias.changelog "log --pretty=format:'- %s by @%an ([%h](https://github.com/${REPOSITORY}/commit/%H))' --abbrev-commit"
+git config alias.changelog "log --pretty=format:'- %s by @%an ([%h](https://github.com/${REPOSITORY}/commit/%H))' --abbrev-commit"
 
 ADDED=$(git changelog --grep="ADDED:" $LAST_TAG..HEAD)
 FIXED=$(git changelog --grep="FIXED:" $LAST_TAG..HEAD)

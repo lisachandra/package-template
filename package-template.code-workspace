@@ -1,0 +1,12 @@
+{
+    "folders": [
+        {
+            "path": "publish"
+        },
+        {
+            "name": "root",
+            "path": "."
+        }
+    ],
+    "settings": {}
+}
