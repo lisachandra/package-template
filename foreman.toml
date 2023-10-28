@@ -1,5 +1,5 @@
 [tools]
-wally = { source = "upliftgames/wally", version = "0.x" }
+wally = { source = "UpliftGames/wally", version = "0.x" }
 lune = { source = "filiptibell/lune", version = "0.x" }
 rojo = { source = "rojo-rbx/rojo", version = "7.x" }
 luau-lsp = { source = "JohnnyMorganz/luau-lsp", version = "1.x" }
