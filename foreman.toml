@@ -1,4 +1,4 @@
 [tools]
-lune = { source = "filiptibell", version = "0.x" }
+lune = { source = "filiptibell/lune", version = "0.x" }
 rojo = { source = "rojo-rbx/rojo", version = "7.x" }
 luau-lsp = { source = "JohnnyMorganz/luau-lsp", version = "1.x" }
