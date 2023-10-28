@@ -9,7 +9,7 @@ on:
         type: number
 
 jobs:
-  main:
+  bump:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -37,11 +37,9 @@ jobs:
           VERSION: ${{ github.event.inputs.version }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          chmod +x publish/create_changelog.bash
-          ./publish/create_changelog.bash $VERSION $REPOSITORY
-          CHANGES=$(cat CHANGES.md)
-          awk -v A="$CHANGES" '{ if (NR == 6) print A; else print $0}' CHANGELOG.md > newCHANGELOG.md
-          mv newCHANGELOG.md CHANGELOG.md
+          cd publish
+          lune create_changelog.lua $VERSION $REPOSITORY
+          cd ..
 
       - name: Push changes
         env:

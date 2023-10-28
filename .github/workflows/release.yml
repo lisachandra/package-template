@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  release:
     name: Build and Release
     runs-on: ubuntu-latest
     steps:
@@ -57,7 +57,7 @@ jobs:
         run: |
           cd publish
           lune get_changes.lua > CHANGES.md
-          sed -i 's|(rbxm)|(https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/package-template.rbxm)|' RELEASE_NOTE.md
+          sed -i 's|rbxm|https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/package-template.rbxm|' RELEASE_NOTE.md
           sed -i 's|version|${{ github.ref_name }}|' RELEASE_NOTE.md
           cat CHANGES.md >> RELEASE_NOTE.md
           cd ..
